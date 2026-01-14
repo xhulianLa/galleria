@@ -1,0 +1,31 @@
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+    transform: translateY(var(--fade-in-distance, 8px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fade-in-text-item {
+  opacity: 0;
+  transform: translateY(var(--fade-in-distance, 8px));
+  animation: fadeInText var(--fade-in-duration, 0.6s) ease forwards;
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-text-item {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
