@@ -1,0 +1,103 @@
+.inner-page {
+  display: flex;
+  justify-content: center;
+  flex: 2;
+}
+
+.inner-page-left {
+  width: 100%;
+  position: relative;
+}
+
+.inner-page-title-wrapper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-33%, 0);
+  background-color: white;
+  padding: 2em;
+}
+
+.inner-page__hero {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(260px, 1fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.inner-page__meta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1em;
+}
+
+.inner-page__title {
+  font-size: clamp(1rem, 3vw, 2rem);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.inner-page__artist {
+  font-size: 0.8rem;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+  color: #6a6a6a;
+  margin: 0;
+}
+
+.inner-page__year {
+  position: absolute;
+  top: -40%;
+  font-size: 15vw;
+  color: #9a9a9a1e;
+  margin: 0;
+  font-weight: bold;
+}
+
+.inner-page__description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a4a4a;
+  margin: 0;
+}
+
+.inner-page__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.7rem;
+  color: #3a3a3a;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.2rem;
+}
+
+.inner-page__status {
+  font-size: 1rem;
+  color: #6a6a6a;
+}
+
+@media (orientation: portrait) {
+  .inner-page__hero {
+    grid-template-columns: 1fr;
+  }
+
+  .inner-page__year {
+    position: absolute;
+    top: -10vh;
+    font-size: 18vh;
+    color: #9a9a9a14;
+    margin: 0;
+    font-weight: bold;
+  }
+
+  .inner-page__hero {
+    gap: 10vh;
+  }
+}

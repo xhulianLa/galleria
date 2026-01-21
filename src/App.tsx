@@ -2,25 +2,18 @@ import "./App.css";
 import SearchBar from "./components/SearchBar/searchbar";
 import GalleryContainer from "./components/GalleryContainer/gallerycontainer";
 import NavBar from "./components/NavBar/navbar";
-import { useEffect, useState } from "react";
 import FadeInText from "./components/fadeintext";
-import { Outlet } from "react-router-dom";
+import type { Dispatch, SetStateAction } from "react";
+import type { AppState, Exhibit } from "./types";
 
-function App() {
-  interface AppState {
-    isSearching: boolean;
-  }
+type AppProps = {
+  exhibits: Exhibit[];
+  setExhibits: Dispatch<SetStateAction<Exhibit[]>>;
+  appState: AppState;
+  setAppState: Dispatch<SetStateAction<AppState>>;
+};
 
-  const [exhibits, setExhibits] = useState();
-  const [state, setState] = useState<AppState>({ isSearching: false });
-
-  useEffect(() => {
-    fetch("response.json")
-      .then((response) => response.json())
-      .then((json) => setExhibits(json.results))
-      .catch((error) => console.log(error));
-  }, []);
-
+function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
   return (
     <div className="app-wrapper">
       <NavBar />
@@ -34,13 +27,13 @@ function App() {
       </header>
       <main>
         <GalleryContainer
-          appState={state}
-          setAppState={setState}
+          appState={appState}
+          setAppState={setAppState}
           exhibits={exhibits}
         ></GalleryContainer>
         <SearchBar
-          appState={state}
-          setAppState={setState}
+          appState={appState}
+          setAppState={setAppState}
           updateExhibits={setExhibits}
         ></SearchBar>
       </main>

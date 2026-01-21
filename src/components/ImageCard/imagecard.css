@@ -1,0 +1,54 @@
+/* Image card with lower-left action button */
+.image-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+  border-radius: 6px;
+  background-color: #f2f2f2;
+}
+
+.image-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.image-card__button {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.2rem;
+}
+
+.image-card__button:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.image-card__button-icon {
+  position: relative;
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid #ffffff;
+}
+
+.image-card__button-icon::after {
+  content: "";
+  position: absolute;
+  right: -0.25rem;
+  bottom: -0.25rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}

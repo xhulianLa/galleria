@@ -1,33 +1,8 @@
 import "./gridcontainer.css";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-
-type Exhibit = {
-  id: string;
-  author: string;
-  width: number;
-  height: number;
-  url: string;
-  download_url: string;
-};
-
-type Exhibit2 = {
-  exhibit_id: number;
-  title: string;
-  date_display: string;
-  culture: string;
-  type: string;
-  technique: string;
-  measurements: string;
-  tombstone: string;
-  description: string;
-  artist: string;
-  department: string;
-  collection: string;
-  url: string;
-  image_url: string;
-};
+import { useNavigate } from "react-router-dom";
+import type { AppState, Exhibit } from "../../types";
 
 type LoadedImage = {
   id: string;
@@ -41,9 +16,9 @@ type LoadedImage = {
 };
 
 type GalleryProps = {
-  exhibits?: Exhibit2[];
-  appState: { isSearching: boolean };
-  setAppState: Dispatch<SetStateAction<{ isSearching: boolean }>>;
+  exhibits?: Exhibit[];
+  appState: AppState;
+  setAppState: Dispatch<SetStateAction<AppState>>;
 };
 
 function GalleryContainer({ exhibits, appState, setAppState }: GalleryProps) {
@@ -86,16 +61,32 @@ function GalleryContainer({ exhibits, appState, setAppState }: GalleryProps) {
       .then((loadedSrcs) => {
         if (cancelled) return;
 
-        const sizedImages = loadedSrcs.map((src, index) => ({
-          id: exhibits[index]?.exhibit_id ?? src,
-          src,
-          colSpan: randomSpan(),
-          rowSpan: randomSpan(),
-          title: exhibits[index]?.title,
-          artist: exhibits[index]?.artist,
-          type: exhibits[index]?.type,
-          technique: exhibits[index]?.technique,
-        }));
+        const sizedImages = loadedSrcs.map((src, index) => {
+          const exhibit = exhibits[index];
+          if (!exhibit) {
+            return {
+              id: src,
+              src,
+              colSpan: randomSpan(),
+              rowSpan: randomSpan(),
+              title: "Untitled",
+              artist: "Unknown artist",
+              type: "",
+              technique: "",
+            };
+          }
+
+          return {
+            id: String(exhibit.exhibit_id),
+            src,
+            colSpan: randomSpan(),
+            rowSpan: randomSpan(),
+            title: exhibit.title,
+            artist: exhibit.artist,
+            type: exhibit.type,
+            technique: exhibit.technique,
+          };
+        });
 
         setImages(sizedImages);
         setAppState((prev) => ({ ...prev, isSearching: false }));
@@ -120,20 +111,20 @@ function GalleryContainer({ exhibits, appState, setAppState }: GalleryProps) {
     <div className="grid-container">
       {!isLoading &&
         images.length > 0 &&
-        images.map((image, index) => {
+        images.map((image) => {
           return (
             <div
               onClick={() => {
-                navigate(`/${image.id}`);
+                navigate(`/exhibit/${image.id}`);
               }}
-              key={index}
+              key={image.id}
               className="exhibit-container"
               style={{
                 gridRowEnd: `span ${image.rowSpan}`,
                 gridColumnEnd: `span ${image.colSpan}`,
               }}
             >
-              <img key={image.id} className="exhibit" src={image.src}></img>
+              <img className="exhibit" src={image.src}></img>
               <div className="exhibit-info">
                 <h1 className="exhibit-info-title">{image.title}</h1>
                 <h2 className="exhibit-info-artist">{image.artist}</h2>
