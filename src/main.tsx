@@ -11,7 +11,7 @@ function AppRoutes() {
   const [appState, setAppState] = useState<AppState>({ isSearching: false });
 
   useEffect(() => {
-    fetch("response.json")
+    fetch("/response.json")
       .then((response) => response.json())
       .then((json) => setExhibits(json.results ?? []))
       .catch((error) => console.log(error));

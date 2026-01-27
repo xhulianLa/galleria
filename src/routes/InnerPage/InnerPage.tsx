@@ -1,5 +1,6 @@
 import NavBar from "../../components/NavBar/navbar";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import ImageCard from "../../components/ImageCard/ImageCard";
 import type { Exhibit } from "../../types";
@@ -27,9 +28,36 @@ function extractArtistName(input) {
 
 function InnerPage({ exhibits }: InnerPageProps) {
   const { eid } = useParams();
-  const exhibit = exhibits.find(
-    (item) => String(item.exhibit_id) === String(eid)
-  );
+  const exhibitFromList = useMemo(() => {
+    return exhibits.find((item) => String(item.exhibit_id) === String(eid));
+  }, [eid, exhibits]);
+  const [fallbackExhibit, setFallbackExhibit] = useState<Exhibit | null>(null);
+  const exhibit = exhibitFromList ?? fallbackExhibit;
+
+  useEffect(() => {
+    if (exhibitFromList || !eid) {
+      setFallbackExhibit(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    fetch(`/rest/exhibits?exhibit_id=${eid}`)
+      .then((response) => response.json())
+      .then((json) => {
+        if (cancelled) return;
+        const result = json?.results?.[0] ?? null;
+        setFallbackExhibit(result);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.log(error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [eid, exhibitFromList]);
 
   return (
     <div className="app-wrapper">
@@ -41,11 +69,11 @@ function InnerPage({ exhibits }: InnerPageProps) {
         {exhibit && (
           <section className="inner-page__hero">
             <div className="inner-page-left">
-              <ImageCard
-                src={exhibit.image_url}
-                alt={exhibit.title}
-                viewHref={exhibit.image_url}
-              />
+            <ImageCard
+              src={exhibit.image_url}
+              alt={exhibit.title}
+              viewSrc={exhibit.image_url}
+            />
               <div className="inner-page-title-wrapper">
                 <h1 className="inner-page__title">{exhibit.title}</h1>
                 <p className="inner-page__artist">
@@ -74,7 +102,7 @@ function InnerPage({ exhibits }: InnerPageProps) {
           </section>
         )}
       </main>
-      <NavigationBar exhibit={exhibit} />
+      <NavigationBar exhibit={exhibit} exhibits={exhibits} />
     </div>
   );
 }
