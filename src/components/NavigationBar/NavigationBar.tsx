@@ -12,7 +12,7 @@ type NavigationBarProps = {
 function NavigationBar({ exhibit, exhibits }: NavigationBarProps) {
   const navigate = useNavigate();
   const currentIndex = exhibit
-    ? exhibits.findIndex((item) => item.exhibit_id === exhibit.exhibit_id)
+    ? exhibits.findIndex((item) => item.id === exhibit.id)
     : -1;
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex >= 0 && currentIndex < exhibits.length - 1;
@@ -24,13 +24,13 @@ function NavigationBar({ exhibit, exhibits }: NavigationBarProps) {
   const goPrev = () => {
     if (!hasPrev) return;
     const prev = exhibits[currentIndex - 1];
-    navigate(`/exhibit/${prev.exhibit_id}`);
+    navigate(`/exhibit/${prev.id}`);
   };
 
   const goNext = () => {
     if (!hasNext) return;
     const next = exhibits[currentIndex + 1];
-    navigate(`/exhibit/${next.exhibit_id}`);
+    navigate(`/exhibit/${next.id}`);
   };
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function NavigationBar({ exhibit, exhibits }: NavigationBarProps) {
         <div className="navigation-wrapper">
           <div className="navigation-title-wrapper">
             <h2>{exhibit ? exhibit.title : ""}</h2>
-            <p>{exhibit ? exhibit.artist : ""}</p>
+            <p>{exhibit ? exhibit.artist_names : ""}</p>
           </div>
           <div className="navigation-buttons">
             <button

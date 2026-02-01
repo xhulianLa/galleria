@@ -1,0 +1,40 @@
+.footer {
+  border-top: 1px solid #e3e3e3;
+  padding: 1.5rem 0;
+}
+
+.footer__content {
+  display: flex;
+  height: 8vh;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.footer__page {
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.7rem;
+  color: #6a6a6a;
+}
+
+.footer__nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer__button {
+  border: 1px solid #d0d0d0;
+  background: none;
+  padding: 0.55rem 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.65rem;
+  cursor: pointer;
+  color: #2a2a2a;
+}
+
+.footer__button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

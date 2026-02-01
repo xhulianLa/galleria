@@ -1,15 +1,20 @@
 header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding-top: 2em;
   position: relative;
-  height: 80vh;
+  height: 70vh;
   isolation: isolate;
   background-color: white;
 }
 
 .header-title-container {
-  position: absolute;
-  top: 30%;
-  left: 10%;
+  padding: 1em;
+}
+
+.header-p {
+  padding: 1em;
 }
 
 .header-title {
@@ -39,12 +44,57 @@ header {
   mix-blend-mode: difference;
 }
 
+.home-section {
+  position: relative;
+  align-items: center;
+  height: 60vh;
+  background-color: black;
+}
+
+.section-title {
+  position: sticky;
+  color: rgb(255, 255, 255);
+  font-size: calc((6vw + 6vh) / 2);
+  padding: 2em;
+  font-weight: 2000;
+  z-index: 1;
+}
+
+.gallery-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.gallery-controls__group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.gallery-controls__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  color: #6a6a6a;
+}
+
+.gallery-controls__select {
+  border: 1px solid #d0d0d0;
+  background: #ffffff;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+}
+
 main {
   display: flex;
   flex-direction: column;
   position: relative;
   min-height: 100%;
   background-color: #ffffff;
+  gap: 1em;
 }
 
 .app-wrapper {
@@ -54,6 +104,7 @@ main {
   min-height: 100vh;
   align-items: center;
   font-family: var(--font-main);
+  gap: 5vh;
 }
 
 .app-wrapper > * {

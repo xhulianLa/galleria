@@ -10,43 +10,50 @@ type InnerPageProps = {
   exhibits: Exhibit[];
 };
 
-function extractFirstYear(yearString) {
+function extractFirstYear(yearString?: string) {
+  if (!yearString) return null;
   const match = yearString.match(/\d{4}/);
   return match ? match[0] : null;
 }
 
-function extractArtistName(input) {
-  // Remove everything in parentheses
-  const withoutParens = input.replace(/\s*\(.*?\)\s*/, "");
+function extractArtistName(input?: string) {
+  if (!input) return "Unknown artist";
+  return input.replace(/\s*\(.*?\)\s*/, "").trim();
+}
 
-  // Remove leading first name if present (keeps common museum-style format)
-  const parts = withoutParens.trim().split(" ");
-
-  // Heuristic: drop the first name, keep the rest
-  return parts.slice(1).join(" ");
+function stripEmTags(input?: string) {
+  if (!input) return "";
+  return input.replace(/<\/?em>/g, "");
 }
 
 function InnerPage({ exhibits }: InnerPageProps) {
   const { eid } = useParams();
   const exhibitFromList = useMemo(() => {
-    return exhibits.find((item) => String(item.exhibit_id) === String(eid));
+    return exhibits.find((item) => String(item.id) === String(eid));
   }, [eid, exhibits]);
   const [fallbackExhibit, setFallbackExhibit] = useState<Exhibit | null>(null);
   const exhibit = exhibitFromList ?? fallbackExhibit;
+  const description = stripEmTags(exhibit?.description);
 
   useEffect(() => {
-    if (exhibitFromList || !eid) {
+    if (!eid) {
+      setFallbackExhibit(null);
+      return;
+    }
+
+    if (exhibitFromList) {
       setFallbackExhibit(null);
       return;
     }
 
     let cancelled = false;
+    setFallbackExhibit(null);
 
-    fetch(`/rest/exhibits?exhibit_id=${eid}`)
+    fetch(`/api/exhibits?exhibit_id=${eid}`)
       .then((response) => response.json())
       .then((json) => {
         if (cancelled) return;
-        const result = json?.results?.[0] ?? null;
+        const result = json?.items?.[0] ?? null;
         setFallbackExhibit(result);
       })
       .catch((error) => {
@@ -60,7 +67,7 @@ function InnerPage({ exhibits }: InnerPageProps) {
   }, [eid, exhibitFromList]);
 
   return (
-    <div className="app-wrapper">
+    <div className="app-wrapper inner-page-shell">
       <NavBar />
       <main className="inner-page">
         {!exhibit && (
@@ -69,26 +76,26 @@ function InnerPage({ exhibits }: InnerPageProps) {
         {exhibit && (
           <section className="inner-page__hero">
             <div className="inner-page-left">
-            <ImageCard
-              src={exhibit.image_url}
-              alt={exhibit.title}
-              viewSrc={exhibit.image_url}
-            />
+              <ImageCard
+                src={exhibit.image_web_url}
+                alt={exhibit.title}
+                viewSrc={exhibit.image_web_url}
+              />
               <div className="inner-page-title-wrapper">
                 <h1 className="inner-page__title">{exhibit.title}</h1>
                 <p className="inner-page__artist">
-                  {extractArtistName(exhibit.artist)}
+                  {extractArtistName(exhibit.artist_names)}
                 </p>
               </div>
             </div>
             <div className="inner-page__meta">
-              {exhibit.date_display && (
+              {exhibit.creation_date_display && (
                 <p className="inner-page__year">
-                  {extractFirstYear(exhibit.date_display)}
+                  {exhibit.creation_year_earliest}
                 </p>
               )}
-              {exhibit.description && (
-                <p className="inner-page__description">{exhibit.description}</p>
+              {description && (
+                <p className="inner-page__description">{description}</p>
               )}
               <a
                 className="inner-page__source"

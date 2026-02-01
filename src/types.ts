@@ -1,18 +1,16 @@
 export type Exhibit = {
-  exhibit_id: number;
+  id: number;
   title: string;
-  date_display: string;
-  culture: string;
-  type: string;
-  technique: string;
-  measurements: string;
-  tombstone: string;
-  description: string | null;
-  artist: string;
-  department: string;
-  collection: string;
+  creation_date_display?: string;
+  creation_year_earliest?: number;
+  department?: string;
+  object_type?: string;
+  technique?: string;
+  culture?: string;
+  description?: string;
+  image_web_url: string;
   url: string;
-  image_url: string;
+  artist_names?: string;
 };
 
 export type AppState = {
