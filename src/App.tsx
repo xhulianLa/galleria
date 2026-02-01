@@ -95,7 +95,7 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
 
   return (
     <div className="app-wrapper">
-      <NavBar />
+      <NavBar firstExhibitId={exhibits[0]?.id} />
       {isHome && (
         <header>
           <div className="overlay-box" />
@@ -141,7 +141,9 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
               id="sort-order"
               className="gallery-controls__select"
               value={sortOrder}
-              onChange={(event) => setSortOrder(event.target.value as SortOrder)}
+              onChange={(event) =>
+                setSortOrder(event.target.value as SortOrder)
+              }
             >
               <option value="asc">Ascending</option>
               <option value="desc">Descending</option>

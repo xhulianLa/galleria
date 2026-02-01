@@ -68,7 +68,7 @@ function InnerPage({ exhibits }: InnerPageProps) {
 
   return (
     <div className="app-wrapper inner-page-shell">
-      <NavBar />
+      <NavBar firstExhibitId={exhibits[0]?.id ?? exhibit?.id} />
       <main className="inner-page">
         {!exhibit && (
           <p className="inner-page__status">Loading image details...</p>

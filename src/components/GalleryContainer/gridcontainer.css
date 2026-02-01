@@ -79,6 +79,12 @@
   z-index: 200;
 }
 
+@media (hover: none) {
+  .exhibit-info {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .exhibit-container {
     transition: none;

@@ -1,14 +1,22 @@
 import "./navbar.css";
-import { NavLink, Link } from "react-router";
+import { Link } from "react-router-dom";
 
-function NavBar() {
+type NavBarProps = {
+  firstExhibitId?: number | string;
+};
+
+function NavBar({ firstExhibitId }: NavBarProps) {
+  const slideshowTarget = firstExhibitId
+    ? `/exhibit/${firstExhibitId}`
+    : "/";
+
   return (
     <nav>
       <ul className="nav-items">
         <Link id="logo" to="/">
           galleria<span id="logo-dot">.</span>
         </Link>
-        <Link id="slideshow-link" to="/">
+        <Link id="slideshow-link" to={slideshowTarget}>
           START SLIDESHOW
         </Link>
       </ul>
