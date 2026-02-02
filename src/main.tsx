@@ -34,17 +34,14 @@ function AppRoutes() {
           />
         }
       />
-      <Route
-        path="/exhibit/:eid"
-        element={<InnerPage exhibits={exhibits} />}
-      />
+      <Route path="/exhibit/:eid" element={<InnerPage exhibits={exhibits} />} />
     </Routes>
   );
 }
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/galleria">
       <AppRoutes />
     </BrowserRouter>
   </StrictMode>
