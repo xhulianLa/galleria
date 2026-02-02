@@ -1,8 +1,9 @@
 import "../../components/NavigationBar/NavigationBar.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ButtonIcon from "../../assets/icon-back-button.svg";
 import type { Exhibit } from "../../types";
+
+const buttonIcon = "/assets/icon-back-button.svg";
 
 type NavigationBarProps = {
   exhibit?: Exhibit;
@@ -67,7 +68,7 @@ function NavigationBar({ exhibit, exhibits }: NavigationBarProps) {
               onClick={goPrev}
               disabled={!hasPrev}
             >
-              <img src={ButtonIcon}></img>
+              <img src={buttonIcon} alt="" aria-hidden="true"></img>
             </button>
             <button
               className="next"
@@ -75,7 +76,7 @@ function NavigationBar({ exhibit, exhibits }: NavigationBarProps) {
               onClick={goNext}
               disabled={!hasNext}
             >
-              <img src={ButtonIcon}></img>
+              <img src={buttonIcon} alt="" aria-hidden="true"></img>
             </button>
           </div>
         </div>
