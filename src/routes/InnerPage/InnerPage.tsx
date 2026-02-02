@@ -10,11 +10,11 @@ type InnerPageProps = {
   exhibits: Exhibit[];
 };
 
-function extractFirstYear(yearString?: string) {
+/* function extractFirstYear(yearString?: string) {
   if (!yearString) return null;
   const match = yearString.match(/\d{4}/);
   return match ? match[0] : null;
-}
+} */
 
 function extractArtistName(input?: string) {
   if (!input) return "Unknown artist";
@@ -109,7 +109,7 @@ function InnerPage({ exhibits }: InnerPageProps) {
           </section>
         )}
       </main>
-      <NavigationBar exhibit={exhibit} exhibits={exhibits} />
+      <NavigationBar exhibit={exhibit ?? undefined} exhibits={exhibits} />
     </div>
   );
 }

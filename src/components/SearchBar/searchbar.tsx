@@ -1,63 +1,70 @@
-import { useState, useRef, useEffect } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import "./searchbar.css";
+import type { AppState } from "../../types";
 
-export default function SearchBar({updateExhibits, appState, setAppState}) {
+type SearchBarProps = {
+  updateExhibits: (items: unknown[]) => void;
+  appState: AppState;
+  setAppState: Dispatch<SetStateAction<AppState>>;
+};
+
+export default function SearchBar({
+  updateExhibits,
+  appState,
+  setAppState,
+}: SearchBarProps) {
   const [inputData, setInputData] = useState("");
   const isSearching = appState.isSearching;
 
-  const search = () => {
-    fetch("https://jsonplaceholder.typicode.com/posts", {
-      method: "POST",
-      body: JSON.stringify({
-        title: "foo",
-        body: inputData,
-        userId: 1,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => console.log(json));
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    setAppState({isSearching: true});
+    setAppState({ isSearching: true });
     e.preventDefault();
     search2();
   };
 
-  function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
+  const getRandomInt = (max: number) => {
+    return Math.floor(Math.random() * max);
+  };
 
   const search2 = () => {
-    const page = getRandomInt(20)
+    const page = getRandomInt(20);
     fetch(`https://picsum.photos/v2/list?page=${page}&limit=20`)
       .then((response) => response.json())
       .then((json) => updateExhibits(json))
-      .catch((err) => {console.log(err)});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
-    console.log(`Is searching: ${isSearching}`)
-    console.log("Searchbar effect started")
-  }, [isSearching])
-
+    console.log(`Is searching: ${isSearching}`);
+    console.log("Searchbar effect started");
+  }, [isSearching]);
 
   return (
-    <form className="searchbar-container" onSubmit={handleSubmit} method="post" tabIndex={1}>
+    <form
+      className="searchbar-container"
+      onSubmit={handleSubmit}
+      method="post"
+      tabIndex={1}
+    >
       <div className="searchbar-container-wrapper">
-            <input
-            disabled={isSearching}
-            className="searchbar-input"
-            onChange={(e) => setInputData(e.target.value)}
-            name="query"
-            />
-            <button disabled={isSearching} className="searchbar-button" type="submit">
-            Search
-            </button>
-        </div>
+        <input
+          disabled={isSearching}
+          className="searchbar-input"
+          value={inputData}
+          onChange={(e) => setInputData(e.target.value)}
+          name="query"
+        />
+        <button
+          disabled={isSearching}
+          className="searchbar-button"
+          type="submit"
+        >
+          Search
+        </button>
+      </div>
     </form>
   );
 }
