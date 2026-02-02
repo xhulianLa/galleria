@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Exhibit } from "../../types";
 
-const buttonIcon = "/assets/icon-back-button.svg";
+const buttonIcon = `${import.meta.env.BASE_URL}assets/icon-back-button.svg`;
 
 type NavigationBarProps = {
   exhibit?: Exhibit;

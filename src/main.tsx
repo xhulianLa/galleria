@@ -39,9 +39,11 @@ function AppRoutes() {
   );
 }
 
+const baseName = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter basename="/galleria">
+    <BrowserRouter basename={baseName}>
       <AppRoutes />
     </BrowserRouter>
   </StrictMode>
