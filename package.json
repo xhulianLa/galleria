@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage":"https://xhulianla.github.io/galleria",
+  "homepage":"https://*redacted*.github.io/galleria",
   "scripts": {
-    "predeploy": "npm run build",
+    "predeploy": "cross-env VITE_BASE=/galleria/ npm run build",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc -b && vite build",

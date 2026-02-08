@@ -101,7 +101,9 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
           <div className="overlay-box" />
           <FadeInText className="header-title-container" staggerMs={2000}>
             <h1 className="header-title">
-              A MODERN <br /> ART GALLERY
+              WELCOME TO
+              <br /> GALLERIA <br />
+              ART GALLERY
             </h1>
           </FadeInText>
           <FadeInText>
@@ -119,35 +121,38 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
       )}
       <main>
         <div className="gallery-controls">
-          <div className="gallery-controls__group">
-            <label className="gallery-controls__label" htmlFor="sort-key">
-              Sort by
-            </label>
-            <select
-              id="sort-key"
-              className="gallery-controls__select"
-              value={sortKey}
-              onChange={(event) => setSortKey(event.target.value as SortKey)}
-            >
-              <option value="title">Title</option>
-              <option value="creation_year_earliest">Year</option>
-            </select>
-          </div>
-          <div className="gallery-controls__group">
-            <label className="gallery-controls__label" htmlFor="sort-order">
-              Order
-            </label>
-            <select
-              id="sort-order"
-              className="gallery-controls__select"
-              value={sortOrder}
-              onChange={(event) =>
-                setSortOrder(event.target.value as SortOrder)
-              }
-            >
-              <option value="asc">Ascending</option>
-              <option value="desc">Descending</option>
-            </select>
+          <h1 id="gallery-section-title">Exhibits</h1>
+          <div className="gallery-controls__wrapper">
+            <div className="gallery-controls__group">
+              <label className="gallery-controls__label" htmlFor="sort-key">
+                Sort by
+              </label>
+              <select
+                id="sort-key"
+                className="gallery-controls__select"
+                value={sortKey}
+                onChange={(event) => setSortKey(event.target.value as SortKey)}
+              >
+                <option value="title">Title</option>
+                <option value="creation_year_earliest">Year</option>
+              </select>
+            </div>
+            <div className="gallery-controls__group">
+              <label className="gallery-controls__label" htmlFor="sort-order">
+                Order
+              </label>
+              <select
+                id="sort-order"
+                className="gallery-controls__select"
+                value={sortOrder}
+                onChange={(event) =>
+                  setSortOrder(event.target.value as SortOrder)
+                }
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </div>
           </div>
         </div>
         <GalleryContainer
