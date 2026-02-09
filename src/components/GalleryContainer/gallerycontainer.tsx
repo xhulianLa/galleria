@@ -1,6 +1,6 @@
 import "./gridcontainer.css";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { AppState, Exhibit } from "../../types";
 
 const FADE_MS = 300;
@@ -25,6 +25,7 @@ function GalleryContainer({ exhibits, appState }: GalleryProps) {
   const [images, setImages] = useState<LoadedImage[]>([]);
   const isLoading = appState.isSearching;
   const navigate = useNavigate();
+  const location = useLocation();
   const timeoutRef = useRef<number | undefined>(undefined);
   const imagesRef = useRef<LoadedImage[]>([]);
 
@@ -109,7 +110,11 @@ function GalleryContainer({ exhibits, appState }: GalleryProps) {
           return (
             <div
               onClick={() => {
-                navigate(`/exhibit/${image.id}`);
+                navigate(`/exhibit/${image.id}`, {
+                  state: {
+                    from: `${location.pathname}${location.search}`,
+                  },
+                });
               }}
               key={image.id}
               className={[

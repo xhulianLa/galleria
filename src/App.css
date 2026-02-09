@@ -46,18 +46,101 @@ header {
 
 .home-section {
   position: relative;
+  display: flex;
   align-items: center;
-  height: 60vh;
-  background-color: black;
+  min-height: 60vh;
+  padding: 4rem;
+  background: linear-gradient(120deg, #0d0d0d, #1a1a1a);
+  color: #f5f5f5;
 }
 
-.section-title {
-  position: sticky;
-  color: rgb(255, 255, 255);
-  font-size: calc((6vw + 6vh) / 2);
+.home-section > * {
   padding: 2em;
-  font-weight: 2000;
+}
+
+.home-section__content {
+  display: grid;
+  grid-template-columns: minmax(480px, 1.4fr) minmax(220px, 0.8fr);
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.home-section__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.3rem;
+  font-size: 0.7rem;
+  color: #a0a0a0;
+  margin: 0 0 1rem;
+}
+
+.home-section__title {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.1;
+}
+
+.home-section__body {
+  margin: 0;
+  color: #c7c7c7;
+  line-height: 1.7;
+  max-width: 34rem;
+}
+
+.home-section__actions {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.home-section__cta {
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.4rem;
+  background: #ffffff;
+  color: #111111;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.home-section__hint {
+  font-size: 0.8rem;
+  color: #9f9f9f;
+}
+
+.home-section__prompts {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.home-section__prompt {
+  border: 1px solid #2d2d2d;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e2e2;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.home-section__visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.home-section__visual img {
+  scale: 15;
   z-index: 1;
+  stroke: white;
 }
 
 .gallery-controls {
@@ -158,5 +241,25 @@ main {
     width: 100%;
     margin-left: 0;
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 900px) {
+  .home-section {
+    padding: 3rem 0;
+  }
+
+  .home-section__content {
+    grid-template-columns: 1fr;
+  }
+
+  .home-section__visual {
+    min-height: 180px;
+  }
+}
+
+@media (orientation: portrait) {
+  .home-section__visual {
+    display: none;
   }
 }

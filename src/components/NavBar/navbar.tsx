@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 
 type NavBarProps = {
   firstExhibitId?: number | string;
+  returnTo?: string;
 };
 
-function NavBar({ firstExhibitId }: NavBarProps) {
-  const slideshowTarget = firstExhibitId
-    ? `/exhibit/${firstExhibitId}`
-    : "/";
+function NavBar({ firstExhibitId, returnTo }: NavBarProps) {
+  const slideshowTarget = firstExhibitId ? `/exhibit/${firstExhibitId}` : "/";
+  const linkTarget = returnTo ?? slideshowTarget;
+  const linkLabel = returnTo ? "RETURN TO GALLERY" : "START SLIDESHOW";
 
   return (
     <nav>
@@ -16,8 +17,8 @@ function NavBar({ firstExhibitId }: NavBarProps) {
         <Link id="logo" to="/">
           galleria<span id="logo-dot">.</span>
         </Link>
-        <Link id="slideshow-link" to={slideshowTarget}>
-          START SLIDESHOW
+        <Link id="slideshow-link" to={linkTarget}>
+          {linkLabel}
         </Link>
       </ul>
     </nav>

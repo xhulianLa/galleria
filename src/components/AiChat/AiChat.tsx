@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./AiChat.css";
 import type { Exhibit } from "../../types";
+import { AI_ENDPOINT } from "../../api";
 
 type ChatMessage = {
   id: string;
@@ -10,10 +11,19 @@ type ChatMessage = {
 
 type AiChatProps = {
   onResults: (response: string, exhibits: Exhibit[]) => void;
+  isOpen: boolean;
+  onToggle: (open: boolean) => void;
+  prefill?: string;
+  prefillKey?: number;
 };
 
-function AiChat({ onResults }: AiChatProps) {
-  const [isOpen, setIsOpen] = useState(false);
+function AiChat({
+  onResults,
+  isOpen,
+  onToggle,
+  prefill,
+  prefillKey,
+}: AiChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +35,11 @@ function AiChat({ onResults }: AiChatProps) {
     if (!messagesRef.current) return;
     messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    if (!isOpen || !prefill) return;
+    setInputValue(prefill);
+  }, [isOpen, prefill, prefillKey]);
 
   const sendMessage = () => {
     if (!inputValue.trim() || isLoading) return;
@@ -39,7 +54,7 @@ function AiChat({ onResults }: AiChatProps) {
     setInputValue("");
     setIsLoading(true);
 
-    fetch("https://cma-gallery-worker.cheezy2000.workers.dev/api/ai", {
+    fetch(AI_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: messageText }),
@@ -58,7 +73,7 @@ function AiChat({ onResults }: AiChatProps) {
         setMessages((prev) => [...prev, aiMessage]);
         onResults(
           replyText,
-          Array.isArray(json?.exhibits) ? json.exhibits : []
+          Array.isArray(json?.exhibits) ? json.exhibits : [],
         );
       })
       .catch(() => {
@@ -84,22 +99,15 @@ function AiChat({ onResults }: AiChatProps) {
       <button
         className="ai-chat__toggle"
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => onToggle(!isOpen)}
         aria-expanded={isOpen}
       >
-        {isOpen ? "Close" : <img src={AI_Icon} />}
+        {isOpen ? "Close" : <img src={AI_Icon} alt="AI" />}
       </button>
       {isOpen && (
         <div className="ai-chat__panel">
           <div className="ai-chat__header">
             <span>AI Search</span>
-            <button
-              className="ai-chat__minimize"
-              type="button"
-              onClick={() => setIsOpen(false)}
-            >
-              Minimize
-            </button>
           </div>
           <div className="ai-chat__messages" ref={messagesRef}>
             {messages.map((message) => (

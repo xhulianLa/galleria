@@ -6,8 +6,9 @@ import FadeInText from "./components/fadeintext";
 import Footer from "./components/Footer/Footer";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import type { AppState, Exhibit } from "./types";
+import { buildExhibitsUrl } from "./api";
 
 type AppProps = {
   exhibits: Exhibit[];
@@ -22,7 +23,7 @@ type SortOrder = "asc" | "desc";
 const sortExhibits = (
   items: Exhibit[],
   sortKey: SortKey,
-  sortOrder: SortOrder
+  sortOrder: SortOrder,
 ) => {
   const sorted = [...items];
   sorted.sort((a, b) => {
@@ -43,6 +44,7 @@ const sortExhibits = (
 
 function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
   const { page } = useParams();
+  const location = useLocation();
   const pageNumber = Number(page) || 1;
   const normalizedPage = pageNumber > 0 ? pageNumber : 1;
   const isHome = normalizedPage === 1;
@@ -50,11 +52,34 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [baseExhibits, setBaseExhibits] = useState<Exhibit[]>([]);
   const [isAiActive, setIsAiActive] = useState(false);
+  const [isAiOpen, setIsAiOpen] = useState(false);
+  const [aiPrefill, setAiPrefill] = useState("");
+  const [aiPrefillKey, setAiPrefillKey] = useState(0);
   const aiActiveRef = useRef(isAiActive);
+  const aiIcon = `${import.meta.env.BASE_URL}assets/AI icon.svg`;
+  const StarsIcon = `${import.meta.env.BASE_URL}assets/Stars.svg`;
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [normalizedPage]);
+
+  useEffect(() => {
+    if (!exhibits || exhibits.length === 0) return;
+    try {
+      sessionStorage.setItem("gallery:lastExhibits", JSON.stringify(exhibits));
+    } catch (error) {
+      console.log(error);
+    }
+  }, [exhibits]);
+
+  useEffect(() => {
+    const path = `${location.pathname}${location.search}`;
+    try {
+      sessionStorage.setItem("gallery:lastPath", path);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     aiActiveRef.current = isAiActive;
@@ -64,18 +89,15 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
     let cancelled = false;
     const limit = 30;
     const offset = (normalizedPage - 1) * limit;
-    const params = new URLSearchParams({
-      limit: String(limit),
-      offset: String(offset),
-      sort: sortKey,
-      order: sortOrder,
-    });
-    const apiBase =
-      "https://cma-gallery-worker.cheezy2000.workers.dev/api/exhibits";
     const url =
       normalizedPage === 1
         ? "/response.json"
-        : `${apiBase}?${params.toString()}`;
+        : buildExhibitsUrl({
+            limit: String(limit),
+            offset: String(offset),
+            sort: sortKey,
+            order: sortOrder,
+          });
 
     setAppState((prev) => ({ ...prev, isSearching: true }));
 
@@ -125,6 +147,19 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
     setExhibits(baseExhibits);
   };
 
+  const aiPrompts = [
+    "Disturbing art",
+    "Nature, landscapes and flowers",
+    "Myth and folklore",
+    "Quiet portraits",
+  ];
+
+  const handlePromptClick = (prompt: string) => {
+    setAiPrefill(prompt);
+    setAiPrefillKey((prev) => prev + 1);
+    setIsAiOpen(true);
+  };
+
   return (
     <div className="app-wrapper">
       <NavBar firstExhibitId={exhibits[0]?.id} />
@@ -148,7 +183,46 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
       )}
       {isHome && (
         <section className="home-section">
-          <h2 className="section-title">Title here</h2>
+          <div className="home-section__content">
+            <div className="home-section__text">
+              <p className="home-section__eyebrow">New</p>
+              <h2 className="home-section__title">Meet Your AI Curator</h2>
+              <p className="home-section__body">
+                Describe the mood or theme you want to explore and get a curated
+                set of exhibits instantly.
+              </p>
+              <div className="home-section__actions">
+                <button
+                  className="home-section__cta"
+                  type="button"
+                  onClick={() => {
+                    setAiPrefill("");
+                    setIsAiOpen(true);
+                  }}
+                >
+                  Try AI Search
+                </button>
+                <span className="home-section__hint">
+                  or tap a prompt below
+                </span>
+              </div>
+              <div className="home-section__prompts">
+                {aiPrompts.map((prompt) => (
+                  <button
+                    key={prompt}
+                    className="home-section__prompt"
+                    type="button"
+                    onClick={() => handlePromptClick(prompt)}
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="home-section__visual">
+              <img src={StarsIcon} alt="" aria-hidden="true" />
+            </div>
+          </div>
         </section>
       )}
       <main>
@@ -206,7 +280,13 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
         ></GalleryContainer>
       </main>
       <Footer page={normalizedPage} />
-      <AiChat onResults={handleAiResults} />
+      <AiChat
+        onResults={handleAiResults}
+        isOpen={isAiOpen}
+        onToggle={setIsAiOpen}
+        prefill={aiPrefill}
+        prefillKey={aiPrefillKey}
+      />
     </div>
   );
 }

@@ -1,9 +1,10 @@
 import NavBar from "../../components/NavBar/navbar";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import ImageCard from "../../components/ImageCard/ImageCard";
 import type { Exhibit } from "../../types";
+import { buildExhibitsUrl } from "../../api";
 import "./InnerPage.css";
 
 type InnerPageProps = {
@@ -28,12 +29,34 @@ function stripEmTags(input?: string) {
 
 function InnerPage({ exhibits }: InnerPageProps) {
   const { eid } = useParams();
+  const location = useLocation();
+  const [storedExhibits, setStoredExhibits] = useState<Exhibit[]>([]);
+  const listExhibits = exhibits.length > 0 ? exhibits : storedExhibits;
   const exhibitFromList = useMemo(() => {
-    return exhibits.find((item) => String(item.id) === String(eid));
-  }, [eid, exhibits]);
+    return listExhibits.find((item) => String(item.id) === String(eid));
+  }, [eid, listExhibits]);
   const [fallbackExhibit, setFallbackExhibit] = useState<Exhibit | null>(null);
   const exhibit = exhibitFromList ?? fallbackExhibit;
   const description = stripEmTags(exhibit?.description);
+  const returnPath =
+    (location.state as { from?: string } | null)?.from ??
+    sessionStorage.getItem("gallery:lastPath") ??
+    "/";
+  const displayYear =
+    exhibit?.creation_year_earliest ?? exhibit?.creation_date_display;
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("gallery:lastExhibits");
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setStoredExhibits(parsed as Exhibit[]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   useEffect(() => {
     if (!eid) {
@@ -49,7 +72,7 @@ function InnerPage({ exhibits }: InnerPageProps) {
     let cancelled = false;
     setFallbackExhibit(null);
 
-    fetch(`/api/exhibits?exhibit_id=${eid}`)
+    fetch(buildExhibitsUrl({ exhibit_id: String(eid) }))
       .then((response) => response.json())
       .then((json) => {
         if (cancelled) return;
@@ -68,7 +91,10 @@ function InnerPage({ exhibits }: InnerPageProps) {
 
   return (
     <div className="app-wrapper inner-page-shell">
-      <NavBar firstExhibitId={exhibits[0]?.id ?? exhibit?.id} />
+      <NavBar
+        firstExhibitId={listExhibits[0]?.id ?? exhibit?.id}
+        returnTo={returnPath}
+      />
       <main className="inner-page">
         {!exhibit && (
           <p className="inner-page__status">Loading image details...</p>
@@ -89,10 +115,8 @@ function InnerPage({ exhibits }: InnerPageProps) {
               </div>
             </div>
             <div className="inner-page__meta">
-              {exhibit.creation_date_display && (
-                <p className="inner-page__year">
-                  {exhibit.creation_year_earliest}
-                </p>
+              {displayYear && (
+                <p className="inner-page__year">{displayYear}</p>
               )}
               {description && (
                 <p className="inner-page__description">{description}</p>
@@ -109,7 +133,7 @@ function InnerPage({ exhibits }: InnerPageProps) {
           </section>
         )}
       </main>
-      <NavigationBar exhibit={exhibit ?? undefined} exhibits={exhibits} />
+      <NavigationBar exhibit={exhibit ?? undefined} exhibits={listExhibits} />
     </div>
   );
 }
