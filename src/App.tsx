@@ -1,10 +1,11 @@
 import "./App.css";
+import AiChat from "./components/AiChat/AiChat";
 import GalleryContainer from "./components/GalleryContainer/gallerycontainer";
 import NavBar from "./components/NavBar/navbar";
 import FadeInText from "./components/fadeintext";
 import Footer from "./components/Footer/Footer";
 import type { Dispatch, SetStateAction } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { AppState, Exhibit } from "./types";
 
@@ -47,10 +48,17 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
   const isHome = normalizedPage === 1;
   const [sortKey, setSortKey] = useState<SortKey>("title");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+  const [baseExhibits, setBaseExhibits] = useState<Exhibit[]>([]);
+  const [isAiActive, setIsAiActive] = useState(false);
+  const aiActiveRef = useRef(isAiActive);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [normalizedPage]);
+
+  useEffect(() => {
+    aiActiveRef.current = isAiActive;
+  }, [isAiActive]);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,12 +84,19 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
       .then((json) => {
         if (cancelled) return;
         const items = json.items ?? [];
-        setExhibits(sortExhibits(items, sortKey, sortOrder));
+        const sortedItems = sortExhibits(items, sortKey, sortOrder);
+        setBaseExhibits(sortedItems);
+        if (!aiActiveRef.current) {
+          setExhibits(sortedItems);
+        }
       })
       .catch((error) => {
         if (cancelled) return;
         console.log(error);
-        setExhibits([]);
+        setBaseExhibits([]);
+        if (!aiActiveRef.current) {
+          setExhibits([]);
+        }
       })
       .finally(() => {
         if (cancelled) return;
@@ -92,6 +107,23 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
       cancelled = true;
     };
   }, [normalizedPage, setAppState, setExhibits, sortKey, sortOrder]);
+
+  const scrollToGallery = () => {
+    const target = document.getElementById("gallery-section-title");
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleAiResults = (_response: string, aiExhibits: Exhibit[]) => {
+    setIsAiActive(true);
+    setExhibits(aiExhibits);
+    scrollToGallery();
+  };
+
+  const handleClearAiResults = () => {
+    setIsAiActive(false);
+    setExhibits(baseExhibits);
+  };
 
   return (
     <div className="app-wrapper">
@@ -122,6 +154,19 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
       <main>
         <div className="gallery-controls">
           <h1 id="gallery-section-title">Exhibits</h1>
+          {isAiActive && (
+            <div className="gallery-controls__tag">
+              <span>AI results</span>
+              <button
+                type="button"
+                className="gallery-controls__tag-close"
+                onClick={handleClearAiResults}
+                aria-label="Clear AI results"
+              >
+                x
+              </button>
+            </div>
+          )}
           <div className="gallery-controls__wrapper">
             <div className="gallery-controls__group">
               <label className="gallery-controls__label" htmlFor="sort-key">
@@ -161,6 +206,7 @@ function App({ exhibits, setExhibits, appState, setAppState }: AppProps) {
         ></GalleryContainer>
       </main>
       <Footer page={normalizedPage} />
+      <AiChat onResults={handleAiResults} />
     </div>
   );
 }

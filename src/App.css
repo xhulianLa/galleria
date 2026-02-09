@@ -69,10 +69,34 @@ header {
   padding: 0.5rem 0;
 }
 
+.gallery-controls__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid #d9d9d9;
+  background: #f7f7f7;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  color: #4a4a4a;
+}
+
+.gallery-controls__tag-close {
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+}
+
 .gallery-controls__wrapper {
   display: flex;
   align-self: flex-end;
   gap: 1.5rem;
+  margin-left: auto;
 }
 
 .gallery-controls__group {
@@ -126,5 +150,13 @@ main {
 
 #gallery-section-title {
   font-size: 2.5em;
-  margin-right: auto;
+  margin-right: 0;
+}
+
+@media (max-width: 700px) {
+  .gallery-controls__wrapper {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
 }
